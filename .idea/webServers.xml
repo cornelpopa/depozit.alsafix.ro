@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c3f5fa65-15a7-4800-bee1-74b919d7e86b" name="depozit.alsafix.ro" url="http://depozit.alsafix.ro">
+        <fileTransfer rootFolder="/depozit.alsafix.ro" host="depozit.alsafix.ro" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" maxConnections="10" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
