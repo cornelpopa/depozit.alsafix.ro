@@ -190,11 +190,11 @@ class DispatchElementController extends Controller
 
         if (count($rows)) {
             foreach ($rows as $row) {
-                $dispatchElement = $dispatchElements->where('sku', $row[7])
-                                                    ->first();
+                $dispatchElement = $dispatchElements->firstWhere('sku', $row[7]);
                 $sku = $dispatchElement->skuD;
-                $dispatchElement->price = $row['11'];
+                $dispatchElement->price = floatval($row[11]);
                 $dispatchElement->sale_unit_id = $sku->sale_unit_id;
+                $dispatchElement->save();
             }
         }
 

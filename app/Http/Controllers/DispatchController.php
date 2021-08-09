@@ -214,4 +214,11 @@ class DispatchController extends Controller
         return redirect()->back();
     }
 
+    public function name(string $name)
+    {
+        $dispatch = Dispatch::firstWhere('name', $name);
+
+        return redirect()->route('dispatches.show', $dispatch);
+    }
+
 }

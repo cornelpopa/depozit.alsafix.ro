@@ -63,9 +63,9 @@ Route::group( [ 'middleware' => 'auth' ], function () {
     Route::post('/dispatches', 'DispatchController@store')->name('dispatches.store');
     Route::delete('/dispatches/{dispatch}', 'DispatchController@destroy')->name('dispatches.destroy')->middleware('admin');
 
+    Route::get('/dispatches/name/{name}', 'DispatchController@name')
+         ->name('dispatches.name');
 
-
-    //Route::resource( 'dispatches', 'DispatchController' );
 
     Route::get( '/inventories/compareInventory',
         'InventoryController@getCompareInventory' )->name( 'getCompareInvetory' );
