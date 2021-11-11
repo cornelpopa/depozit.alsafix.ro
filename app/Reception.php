@@ -42,7 +42,7 @@ class Reception extends Model
                 return $attributes;
 
             } else {
-
+                unset($attributes["id"]);
                 return $this->elements()->create($attributes);
             }
 
