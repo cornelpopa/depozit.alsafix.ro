@@ -318,6 +318,7 @@ namespace App{
  * @property int $dispatch_id
  * @property int $forwarder_id
  * @property string $tracking_number
+ * @property string $phone
  * @property string $sms_text
  * @property string $sending_time
  * @property string|null $sent_time
@@ -331,6 +332,7 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereDispatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereForwarderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereSendingTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereSentTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereSmsText($value)

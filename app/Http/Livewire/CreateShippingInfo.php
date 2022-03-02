@@ -76,6 +76,7 @@ class CreateShippingInfo extends Component
 
         $this->shipping_info->forwarder_id = $this->selected_forwarder;
         $this->shipping_info->tracking_number = $this->selected_tracking_number;
+        $this->shipping_info->phone = $this->dispatch->phone;
         $this->shipping_info->sms_text = $this->message;
         $this->shipping_info->sending_time = now()->addHour();
         $this->dispatch->shipping_info()

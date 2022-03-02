@@ -18,6 +18,7 @@ class CreateShippingInfosTable extends Migration
             $table->foreignId('dispatch_id');
             $table->foreignId('forwarder_id');
             $table->string('tracking_number');
+            $table->string('phone');
             $table->string('sms_text');
             $table->dateTime('sending_time');
             $table->dateTime('sent_time')->nullable()->default(null);
