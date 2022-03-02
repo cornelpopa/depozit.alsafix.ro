@@ -17,6 +17,7 @@
                         <th scope="col">EAN</th>
                         <th scope="col">Unit</th>
                         <th scope="col" class="text-right">Stock</th>
+                        <th scope="col" class="text-right">GESCOM</th>
                         <th scope="col" class="text-center">Cat.</th>
                         <th scope="col" class="text-right">Act</th>
                     </tr>
@@ -31,6 +32,7 @@
                         <td>{{$sku->ean}}</td>
                         <td>{{$sku->unit}}</td>
                         <td class="text-right">{{getFormattedTotal($stock)}}</td>
+                        <td class="text-right @if($sku->stock != $stock) bg-danger @endif">{{$sku->stock}}</td>
                         <td class="text-center">{{$sku->interest->name}}</td>
                         <td class="text-right">
                             <div class="dropdown p-0">
@@ -134,5 +136,6 @@
 
         </div>
     </div>
+
 
 @endsection

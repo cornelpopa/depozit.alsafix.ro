@@ -17,6 +17,8 @@ class DispatchElement extends Model
 
     protected $with = ['skuD'];
 
+    protected $fillable = ['created_at'];
+
     public function dispatch()
     {
         return $this->belongsTo(Dispatch::class);

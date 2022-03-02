@@ -24,11 +24,13 @@ namespace App{
  * @property string $gescomCity
  * @property int $agent_id
  * @property string $gescomReferenceOrder
+ * @property string|null $phone
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\DispatchElement[] $elements
  * @property-read int|null $elements_count
- * @property-read \App\User $user
+ * @property-read \App\ShippingInfo|null $shipping_info
+ * @property-read \App\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch query()
@@ -41,6 +43,7 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch whereGescomReferenceOrder($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dispatch wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Dispatch whereUserId($value)
  */
@@ -63,10 +66,12 @@ namespace App{
  * @property int $qtyRemaining
  * @property int $qty
  * @property float $price
+ * @property int $sale_unit_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Dispatch $dispatch
- * @property-read \App\Sku $skuD
+ * @property-read \App\Dispatch|null $dispatch
+ * @property-read \App\SaleUnit|null $sale_unit
+ * @property-read \App\Sku|null $skuD
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement query()
@@ -80,11 +85,41 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereQtyDelivered($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereQtyOrdered($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereQtyRemaining($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereSaleUnitId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereSku($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DispatchElement whereUpdatedAt($value)
  */
 	class DispatchElement extends \Eloquent {}
+}
+
+namespace App{
+/**
+ * App\Forwarder
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $scan_length
+ * @property string|null $barcode
+ * @property string|null $limits
+ * @property string|null $tracking_website
+ * @property int $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereBarcode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereLimits($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereScanLength($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereTrackingWebsite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Forwarder whereUpdatedAt($value)
+ */
+	class Forwarder extends \Eloquent {}
 }
 
 namespace App{
@@ -153,8 +188,8 @@ namespace App{
  * @property int $reservedStock
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Inventory $inventory
- * @property-read \App\Sku $sku
+ * @property-read \App\Inventory|null $inventory
+ * @property-read \App\Sku|null $sku
  * @method static \Illuminate\Database\Eloquent\Builder|InventoryElement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InventoryElement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InventoryElement query()
@@ -215,7 +250,7 @@ namespace App{
  * @property string|null $productName
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Reception $reception
+ * @property-read \App\Reception|null $reception
  * @method static \Illuminate\Database\Eloquent\Builder|ReceptionElement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ReceptionElement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ReceptionElement query()
@@ -277,6 +312,36 @@ namespace App{
 
 namespace App{
 /**
+ * App\ShippingInfo
+ *
+ * @property int $id
+ * @property int $dispatch_id
+ * @property int $forwarder_id
+ * @property string $tracking_number
+ * @property string $sms_text
+ * @property string $sending_time
+ * @property string|null $sent_time
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Dispatch|null $dispatch
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereDispatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereForwarderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereSendingTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereSentTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereSmsText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereTrackingNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ShippingInfo whereUpdatedAt($value)
+ */
+	class ShippingInfo extends \Eloquent {}
+}
+
+namespace App{
+/**
  * Post
  *
  * @mixin Eloquent
@@ -292,8 +357,12 @@ namespace App{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Interest $interest
- * @property-read \App\SaleUnit $sale_unit
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\DispatchElement[] $dispatchElements
+ * @property-read int|null $dispatch_elements_count
+ * @property-read \App\Interest|null $interest
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ReceptionElement[] $receptionElements
+ * @property-read int|null $reception_elements_count
+ * @property-read \App\SaleUnit|null $sale_unit
  * @method static \Illuminate\Database\Eloquent\Builder|Sku newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Sku newQuery()
  * @method static \Illuminate\Database\Query\Builder|Sku onlyTrashed()

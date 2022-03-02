@@ -193,6 +193,12 @@
                         </a>
                     </li>
                     <li>
+                        <a @if(request()->segment(1) == 'forwarders') class="active" @endif href="#" data-toggle="tooltip"
+                           data-placement="right" title="Curieri" data-nav-target="#forwarders">
+                            <i data-feather="truck"></i>
+                        </a>
+                    </li>
+                    <li>
                         <a @if(request()->segment(1) == 'logs') class="active" @endif href="#" data-toggle="tooltip"
                            data-placement="right" title="Logs" data-nav-target="#logs">
                             <i data-feather="voicemail"></i>
@@ -306,7 +312,24 @@
                         <li>
                             <a @if(request()->segment(1) == 'skus' && request()->segment(3) == 'importSkuUM') class="active"
                                @endif href="{{route('skus.importSkuUM')}}">Import Sku->UM</a></li>
+                        <li>
+                            <a @if(request()->segment(1) == 'skus' && request()->segment(3) == 'slowMoving') class="active"
+                               @endif href="{{route('skus.slowMoving')}}">Slow Moving</a></li>
 
+                    </ul>
+                </div>
+
+                {{--Left side submenu for forwarders--}}
+                <div @if(!request()->segment(1) || request()->segment(1) == 'forwarders') class="open"
+                     @endif id="forwarders">
+                    <ul>
+                        <li class="navigation-divider">Curieri</li>
+                        <li>
+                            <a @if(!request()->segment(1) || (request()->segment(1) == 'forwarders' && request()->segment(2) == '')) class="active"
+                               @endif href="{{route('forwarders.index')}}">Lista</a></li>
+                        <li>
+                            <a @if(request()->segment(1) == 'forwarders' && request()->segment(2) == 'create') class="active"
+                               @endif href="{{route('forwarders.create')}}">Curier nou</a></li>
                     </ul>
                 </div>
 

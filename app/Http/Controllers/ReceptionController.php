@@ -77,6 +77,12 @@ class ReceptionController extends Controller
         $attributes = request()->validate( [ 'name' => 'required' ] );
         $attributes[ 'name' ] .= request()->input( 'name2' );
 
+        $old_reception = Reception::where('name', '=', $attributes['name'])
+                                  ->first();
+        if($old_reception) {
+            return redirect()->route('addReceptionElements', $old_reception);
+        }
+
         $attributes[ 'user_id' ] = auth()->id();
 
         $newReception = Reception::create( $attributes );

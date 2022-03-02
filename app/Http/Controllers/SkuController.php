@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class SkuController extends Controller
@@ -33,7 +34,10 @@ class SkuController extends Controller
         $filters['ean'] = request()->has('ean') ? request('ean') : "";
 
         $query = Sku::query();
-        $query->with(['interest', 'sale_unit']);
+        $query->with([
+            'interest',
+            'sale_unit'
+        ]);
         $query->where('id', '>', 0);
         foreach ($filters as $key => $value) {
             if ($key != 'page') {
@@ -74,7 +78,7 @@ class SkuController extends Controller
     public function store(Request $request)
     {
         $attributes = $request->validate([
-            'sku'         => 'required|min:3',
+            'sku'         => 'required|unique:skus|min:3',
             'productName' => 'required|min:3',
             'ean'         => 'sometimes|required',
             'unit'        => 'required|numeric',
@@ -133,8 +137,6 @@ class SkuController extends Controller
 
         $cInMovements = collect($inMovements);
         $allMovements = $cInMovements->merge($outMovements);
-
-        //dd($allMovements);
 
         return view('skus.show')->with([
             'sku'                => $sku,
@@ -363,7 +365,8 @@ class SkuController extends Controller
         foreach ($rows as $row) {
             $sku = Sku::findBySku($row[1]);
             if ($sku->id > 0) {
-                $saleUnit = $saleUnits->where('name', 'LIKE', $row[0])->first();
+                $saleUnit = $saleUnits->where('name', 'LIKE', $row[0])
+                                      ->first();
                 $sku->sale_unit_id = $saleUnit->id;
                 $sku->save();
                 $processed[] = $sku;
@@ -380,6 +383,54 @@ class SkuController extends Controller
             'skipped'    => $skipped,
             'total'      => $total,
             'sale_units' => SaleUnit::all(),
+        ]);
+    }
+
+    public function slowMoving()
+    {
+
+        $months = (request()->has('months') ? request('months') : 6);
+        $interest_id = (request()->has('interest_id') ? request('interest_id') : 1);
+
+        $reference = now()->subMonths($months);
+
+        if ($interest_id > 0) {
+            $query = "SELECT s.id, s.sku, s.lastInventory_id,  s.productName, GREATEST(COALESCE(de.created_at, '2020-06-05 00:00:00'), COALESCE(re.created_at, '2020-06-05 00:00:00')) AS created_at FROM skus s 
+                LEFT JOIN dispatch_elements de ON s.sku = de.sku AND de.created_at = (SELECT MAX(created_at) FROM dispatch_elements WHERE sku = de.sku) 
+                LEFT JOIN reception_elements re ON s.sku = re.sku AND re.created_at = (SELECT MAX(created_at) FROM reception_elements WHERE sku = re.sku) 
+                WHERE s.interest_id = $interest_id AND GREATEST(COALESCE(de.created_at, '2020-06-05 00:00:00'), COALESCE(re.created_at, '2020-06-05 00:00:00')) < '"
+                     .$reference->toDateTimeString()."'
+                ORDER BY GREATEST(COALESCE(de.created_at, '2020-06-05 00:00:00'), COALESCE(re.created_at, '2020-06-05 00:00:00'))";
+        } else {
+            $query = "SELECT s.id, s.sku, s.lastInventory_id,  s.productName, GREATEST(COALESCE(de.created_at, '2020-06-05 00:00:00'), COALESCE(re.created_at, '2020-06-05 00:00:00')) AS created_at FROM skus s 
+                LEFT JOIN dispatch_elements de ON s.sku = de.sku AND de.created_at = (SELECT MAX(created_at) FROM dispatch_elements WHERE sku = de.sku) 
+                LEFT JOIN reception_elements re ON s.sku = re.sku AND re.created_at = (SELECT MAX(created_at) FROM reception_elements WHERE sku = re.sku) 
+                WHERE GREATEST(COALESCE(de.created_at, '2020-06-05 00:00:00'), COALESCE(re.created_at, '2020-06-05 00:00:00')) < '"
+                     .$reference->toDateTimeString()."' 
+                ORDER BY GREATEST(COALESCE(de.created_at, '2020-06-05 00:00:00'), COALESCE(re.created_at, '2020-06-05 00:00:00'))";
+        }
+
+        $data = DB::select($query);
+
+        $skus = Sku::hydrate($data);
+
+        /*$skus = Sku::limit(100)
+                   ->get();*/
+
+        $skus = $skus->filter(function ($item) {
+            $stock = $item->calculateStock();
+            if (intval($stock) > 0) {
+                $item->stock = $stock;
+
+                return $item;
+            }
+        });
+
+
+        return view('skus.slowMoving')->with([
+            'skus'        => $skus,
+            'months'      => $months,
+            'interest_id' => $interest_id
         ]);
     }
 }

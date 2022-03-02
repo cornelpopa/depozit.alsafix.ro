@@ -24,6 +24,11 @@ class Dispatch extends Model
         return $this->hasMany(DispatchElement::class);
     }
 
+    public function shipping_info()
+    {
+        return $this->hasOne(ShippingInfo::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class)->withDefault(['A' => 'B']);

@@ -29,6 +29,7 @@ Route::group( [ 'middleware' => 'auth' ], function () {
     Route::post( 'skus/importSkuUM/', 'SkuController@processSkuUM' )->name( 'skus.importSkuUM' );
     Route::get('skus/{sku}/exceptional', 'SkuController@exceptional')->name('skus.exceptional')->middleware('admin');
     Route::post('skus/{sku}/exceptional', 'SkuController@saveExceptional')->name('skus.saveExceptional')->middleware('admin');
+    Route::get( 'skus/slowMoving', 'SkuController@slowMoving' )->name( 'skus.slowMoving' );
     Route::resource( 'skus', 'SkuController' );
 
     Route::get( '/receptions/{reception}/elements',
@@ -43,6 +44,8 @@ Route::group( [ 'middleware' => 'auth' ], function () {
         'ReceptionElementsController@update' )->name( 'updateReceptionElement' );
 
     Route::resource( 'receptions', 'ReceptionController' );
+
+    Route::resource( 'forwarders', 'ForwarderController' );
 
 
     Route::get('/dispatches/{dispatch}/index', 'DispatchElementController@index')->name('DispatchElementsIndex');
@@ -62,7 +65,6 @@ Route::group( [ 'middleware' => 'auth' ], function () {
     Route::get('/dispatches/{dispatch}', 'DispatchController@show')->name('dispatches.show');
     Route::post('/dispatches', 'DispatchController@store')->name('dispatches.store');
     Route::delete('/dispatches/{dispatch}', 'DispatchController@destroy')->name('dispatches.destroy')->middleware('admin');
-
     Route::get('/dispatches/name/{name}', 'DispatchController@name')
          ->name('dispatches.name');
 
@@ -80,9 +82,11 @@ Route::group( [ 'middleware' => 'auth' ], function () {
 
     Route::get( '/reports', "ReportsController@index" );
 
+    Route::get('/shipping_info/{dispatch}', 'ShippingInfoController@show')->name('shipping_info');
+
 } );
 
 Route::get('/api/skuData', 'ApiController@skuData');
 Route::get('/dispatches/{dispatch}/updatePrice', 'DispatchElementController@updatePrice')->name('DispatchElementsUpdatePrice');
-
+Route::get('/dispatches/importBL/{name}', 'DispatchController@importBL')->name('importBL');
 

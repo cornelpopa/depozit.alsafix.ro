@@ -15,6 +15,11 @@
                 <a href="{{route('dispatches.create')}}">
                     <button class="btn btn-primary"><i class="ti-check-box mr-2"></i>Finalizare & Iesire noua</button>
                 </a>
+                @if($dispatch->phone)
+                    <a href="{{route('shipping_info', $dispatch)}}">
+                        <button class="btn btn-light-success"><i class="ti-check-box mr-2"></i>Expeditie</button>
+                    </a>
+                @endif
             </div>
         </div>
     </div>
@@ -102,7 +107,7 @@
                                 {{--<th scope="col">#</th>--}}
                                 <th scope="col">SKU</th>
                                 <th scope="col">Nume</th>
-                                <th scope="col">Stoc</th>
+                                <th scope="col">GESCOM</th>
                                 <th scope="col">Unitate</th>
                                 <th scope="col" class="text-right">Necesar</th>
                                 <th scope="col" class="text-right">Total</th>
@@ -121,18 +126,24 @@
                                 {{--{{dd($dispatchElement, $dispatchElement->skuD)}}--}}
                                 @if ($dispatchElement->qty * $dispatchElement->unit > $dispatchElement->qtyDelivered )
                                     <tr class="table-danger">
-                                @endif
+                                        @endif
                                         {{--<td>{{$dispatchElement->id}}</td>--}}
                                         <td data-toggle="tooltip" title="{{$dispatchElement->ean}}"
-                                            data-placement="top">{{$dispatchElement->sku}}</td>
+                                            data-placement="top">
+                                            <a href="{{route('skus.show', $dispatchElement->skuD->id)}}"
+                                               target="_blank">
+                                                <u>{{$dispatchElement->sku}}</u>
+                                            </a>
+                                        </td>
                                         <td>{{$dispatchElement->productName}}</td>
-                                        <td>{{$dispatchElement->skuD->calculateStock()}}</td>
+                                        <td>{{$dispatchElement->skuD->stock}}</td>
                                         <td>{{$dispatchElement->unit}}</td>
                                         <td class="text-right">{{$dispatchElement->qtyDelivered}}</td>
                                         <td class="text-right">{{getFormattedTotal($dispatchElement->qty*$dispatchElement->unit)}}</td>
                                         <td class="text-right">
                                             <div class="form-inline float-right">
-                                                <form method="POST" action="{{route('updateDispatchElement', [$dispatch, $dispatchElement])}}">
+                                                <form method="POST"
+                                                      action="{{route('updateDispatchElement', [$dispatch, $dispatchElement])}}">
                                                     @csrf
                                                     <input class="form-control form-control-sm text-right no-spinners"
                                                            type="number"
@@ -151,7 +162,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                    @endforeach
                             </tbody>
                         </table>
                     </div>
